@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Bets">
+  <meta name="theme-color" content="#111111">
+  <title>Bets</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="phone" id="phone">
+
+  <!-- iOS status bar + Dynamic Island (desktop frame only) -->
+  <div class="statusbar" id="statusbar" aria-hidden="true">
+    <div class="island"></div>
+    <span class="statusbar__time" id="status-time">14:09</span>
+    <svg class="statusbar__loc" viewBox="0 0 12 12" width="12.7" height="12.7"><path d="M11.2 0.8L0.9 5.2c-.5.2-.4.9.1 1l4.3.9.9 4.3c.1.5.8.6 1 .1L11.6 1.3c.2-.4-.1-.7-.4-.5z" fill="#fff"/></svg>
+    <span class="statusbar__right">
+      <svg class="statusbar__signal" viewBox="0 0 19 12.7" width="19" height="12.7"><rect x="0" y="8.3" width="3" height="4.4" rx="1" fill="#fff"/><rect x="5.4" y="6" width="3" height="6.7" rx="1" fill="#fff"/><rect x="10.7" y="3.3" width="3" height="9.4" rx="1" fill="#6b6b6b"/><rect x="16" y="0" width="3" height="12.7" rx="1" fill="#6b6b6b"/></svg>
+      <svg class="statusbar__wifi" viewBox="0 0 17 12.5" width="16.7" height="12.5"><path d="M8.5 2.6c2.6 0 4.9 1 6.7 2.6l1.3-1.3C14.4 1.9 11.6.8 8.5.8S2.6 1.9.5 3.9l1.3 1.3C3.6 3.6 5.9 2.6 8.5 2.6zm0 3.6c1.6 0 3.1.6 4.2 1.7l1.3-1.3C12.5 5.2 10.6 4.4 8.5 4.4S4.5 5.2 3 6.6l1.3 1.3C5.4 6.8 6.9 6.2 8.5 6.2zm0 3.6c.7 0 1.3.3 1.8.7l-1.8 1.9-1.8-1.9c.5-.4 1.1-.7 1.8-.7z" fill="#fff"/></svg>
+      <span class="statusbar__battery"><span>21</span></span>
+    </span>
+  </div>
+
+  <!-- ===== Home screen ===== -->
+  <section class="screen screen--home" id="screen-home" hidden>
+    <div class="scroll" data-scroll="home">
+      <div class="status-spacer"></div>
+      <header class="hheader">
+        <img class="hheader__logo" src="assets/home-logo@3x.png" alt="Logo">
+        <div class="hright">
+          <button class="pill pill--rewards" type="button">Rewards</button>
+          <button class="balance" type="button" data-action="open-balance" aria-label="Balance">
+            <span class="balance__amount" data-bind="balance">£0.00</span>
+            <img class="balance__plus" src="assets/plus@3x.png" alt="">
+          </button>
+          <button class="avatar" type="button" data-action="open-config" aria-label="Account"><img src="assets/avatar@3x.png" alt=""></button>
+        </div>
+      </header>
+      <div class="search"><img class="search__icon" src="assets/ic-search@3x.png" alt=""><span>Search</span></div>
+      <img class="home-img home-img--tiles" src="assets/home-tiles@3x.png" alt="Football, Scores, Horses, Greyhounds, Roulette">
+      <img class="home-img home-img--banners" src="assets/home-banners@3x.png" alt="UEFA Nations League: Boost your Bet Builder on any game, +25% winnings boost">
+      <img class="home-img home-img--caption" src="assets/home-caption@3x.png" alt="3+ selections and combined odds of EVS or greater. Eligibility restrictions. T&amp;Cs apply.">
+      <img class="home-img home-img--pills" src="assets/home-pills@3x.png" alt="Nations League, Racing, Cricket, Casino, Football">
+      <div class="home-divider"></div>
+      <img class="home-img home-img--section" src="assets/home-section@3x.png" alt="UEFA Nations League, View All">
+      <img class="home-img home-img--cards" src="assets/home-cards@3x.png" alt="Brilliant Bruno super boost and Result/Both Teams acca">
+      <div data-footer></div>
+    </div>
+  </section>
+
+  <!-- ===== My Bets screen ===== -->
+  <section class="screen screen--mybets" id="screen-mybets" hidden>
+    <div class="scroll" data-scroll="mybets">
+      <div class="status-spacer"></div>
+      <header class="header">
+        <h1 class="header__title">My Bets</h1>
+        <div class="hright">
+          <button class="balance" type="button" data-action="open-balance" aria-label="Balance">
+            <span class="balance__amount" data-bind="balance">£0.00</span>
+            <img class="balance__plus" src="assets/plus@3x.png" alt="">
+          </button>
+          <button class="avatar" type="button" data-action="open-config" aria-label="Account"><img src="assets/avatar@3x.png" alt=""></button>
+        </div>
+      </header>
+      <nav class="tabs" role="tablist">
+        <button class="tab is-active" role="tab" data-tab="open">Open</button>
+        <button class="tab" role="tab" data-tab="live">Live</button>
+        <button class="tab" role="tab" data-tab="settled">Settled</button>
+      </nav>
+      <main class="content" id="bets"></main>
+      <div data-footer></div>
+    </div>
+  </section>
+
+  <!-- Floating roulette button -->
+  <button class="fab" id="fab" type="button" aria-label="Open casino games"><img src="assets/fab@3x.png" alt=""></button>
+
+  <!-- Bottom navigation -->
+  <nav class="nav" id="nav" aria-label="Main">
+    <a class="nav__item" href="#" data-nav="home"><img class="nav__icon nav__icon--home" src="assets/nav-home@3x.png" alt="" data-icon="home-off"><img class="nav__icon nav__icon--home" src="assets/nav-home-active@3x.png" alt="" data-icon="home-on"><span class="nav__label" data-bind="balance">£0.00</span></a>
+    <a class="nav__item" href="#" data-nav="sports"><img class="nav__icon nav__icon--search" src="assets/nav-search@3x.png" alt=""><span class="nav__label">All Sports</span></a>
+    <a class="nav__item" href="#" data-nav="inplay"><img class="nav__icon nav__icon--inplay" src="assets/nav-inplay@3x.png" alt=""><span class="nav__label">In-Play</span></a>
+    <a class="nav__item" href="#" data-nav="mybets"><img class="nav__icon nav__icon--mybets" src="assets/nav-mybets-inactive@3x.png" alt="" data-icon="mybets-off"><img class="nav__icon nav__icon--mybets-on" src="assets/nav-mybets@3x.png" alt="" data-icon="mybets-on"><span class="nav__badge" id="nav-badge" hidden>0</span><span class="nav__label">My Bets</span></a>
+    <a class="nav__item" href="#" data-nav="casino"><img class="nav__icon nav__icon--casino" src="assets/nav-casino@3x.png" alt=""><span class="nav__label">Casino</span></a>
+  </nav>
+
+  <!-- ===== Balance sheet ===== -->
+  <div class="bsheet" id="bsheet" hidden>
+    <div class="bsheet__title">Balance</div>
+    <button class="bsheet__close" type="button" data-action="close-balance" aria-label="Close">
+      <svg viewBox="0 0 14 14" width="14" height="14"><path d="M1 1l12 12M13 1L1 13" stroke="#4adbac" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="bsheet__amount" data-bind="balance">£0.00</div>
+    <div class="bsheet__row"><span>Withdrawable</span><span data-bind="balance">£0.00</span></div>
+    <div class="bsheet__row"><span>Bet Credits</span><span>£0.00</span></div>
+    <div class="bsheet__btns">
+      <button class="bsheet__withdraw" type="button" data-action="open-withdraw">Withdraw</button>
+      <button class="bsheet__deposit" type="button">Deposit</button>
+    </div>
+  </div>
+
+  <!-- ===== Bank modal (Withdraw / Balances) ===== -->
+  <div class="bank" id="bank" hidden>
+    <div class="bank__behind"></div>
+    <div class="bank__sheet">
+      <div class="bank__topbar"><span>Bets</span>
+        <button type="button" data-action="close-bank" aria-label="Close"><svg viewBox="0 0 13 13" width="12.7" height="12.7"><path d="M1 1l11 11M12 1L1 12" stroke="#3d3d3d" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="bank__tabs"><span class="is-active">Bank</span><span>My Account</span><span>History</span><span>Gambling Controls</span><span>Messages</span></div>
+      <div class="bank__page" id="bank-page"></div>
+    </div>
+  </div>
+
+  <!-- ===== Bet configurator ===== -->
+  <div class="config" id="config" hidden>
+    <div class="config__scroll" id="config-scroll"></div>
+  </div>
+
+</div><!-- /.phone -->
+<script src="app.js"></script>
+</body>
+</html>
