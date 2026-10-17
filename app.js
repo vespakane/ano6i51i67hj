@@ -182,10 +182,10 @@ function expandedHTML(bet) {
   html += '</div>';
   if (hasCashout(bet)) {
     const amt = money(+bet.cashout);
-    if (co === 'confirm') html += `<button class="bet__cashout bet__cashout--confirm" type="button" data-action="cashout-confirm" data-id="${bet.id}">Confirm&nbsp; ${amt}</button>`;
+    if (co === 'confirm') html += `<button class="bet__cashout bet__cashout--confirm" type="button" data-action="cashout-confirm" data-id="${bet.id}">Confirm<span class="co-amt">${amt}</span></button>`;
     else if (co === 'busy') html += `<button class="bet__cashout bet__cashout--busy" type="button">Cashing Out<span class="spin"></span></button>`;
-    else if (co === 'done') html += `<button class="bet__cashout bet__cashout--done" type="button">${amt}&nbsp; Cashed Out<img src="assets/ic-cashed-check@3x.png" alt=""></button>`;
-    else html += `<button class="bet__cashout" type="button" data-action="cashout" data-id="${bet.id}">Cash Out&nbsp; ${amt}</button>`;
+    else if (co === 'done') html += `<button class="bet__cashout bet__cashout--done" type="button">${amt}<span class="co-amt">Cashed Out</span><img src="assets/ic-cashed-check@3x.png" alt=""></button>`;
+    else html += `<button class="bet__cashout" type="button" data-action="cashout" data-id="${bet.id}">Cash Out<span class="co-amt">${amt}</span></button>`;
   }
   if (settled) {
     if (bet.result === 'won') html += `<div class="bet__foot"><img src="assets/ic-returned-check@3x.png" alt=""><span>${money(c.total)}</span><span class="gap">Returned</span></div>`;
