@@ -121,6 +121,15 @@
     </div>
   </div>
 
+  <!-- ===== Share sheet (fallback) ===== -->
+  <div class="ssheet" id="ssheet" hidden>
+    <div class="ssheet__panel">
+      <div class="ssheet__top"><span>Share</span><button type="button" data-action="close-share" aria-label="Close"><svg viewBox="0 0 14 14" width="14" height="14"><path d="M1 1l12 12M13 1L1 13" stroke="#5a5a5e" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+      <div class="ssheet__preview"><img id="ssheet-img" alt="Bet slip"></div>
+      <div class="ssheet__actions"><a class="ssheet__row" id="ssheet-save" href="#" download="bet.png"><svg viewBox="0 0 24 20" width="24" height="20"><path d="M1.5 3.5A2 2 0 013.5 1.5h5l2 2.5h10a2 2 0 012 2v10.5a2 2 0 01-2 2h-17a2 2 0 01-2-2z" fill="none" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/></svg>Save to Files</a></div>
+    </div>
+  </div>
+
   <!-- ===== Bet configurator ===== -->
   <div class="config" id="config" hidden>
     <div class="config__scroll" id="config-scroll"></div>
