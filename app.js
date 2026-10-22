@@ -34,10 +34,83 @@ function flagHTML(name) {
   const ini = key.split(/\s+/).map(w => w[0] || '').join('').slice(0, 2).toUpperCase();
   return `<span class="team__flag">${esc(ini)}</span>`;
 }
+
+/* ---------- club kits (cut 1:1 from the bet365 match-list screenshots, 45x48 px @3x) ---------- */
+const KIT_ALIASES = {
+  arsenal: 'arsenal', 'arsenal fc': 'arsenal',
+  'aston villa': 'aston-villa', villa: 'aston-villa',
+  bournemouth: 'bournemouth', 'afc bournemouth': 'bournemouth',
+  brentford: 'brentford', 'brentford fc': 'brentford',
+  brighton: 'brighton', 'brighton and hove albion': 'brighton', 'brighton & hove albion': 'brighton', 'brighton hove albion': 'brighton',
+  chelsea: 'chelsea', 'chelsea fc': 'chelsea',
+  coventry: 'coventry', 'coventry city': 'coventry',
+  'crystal palace': 'crystal-palace', palace: 'crystal-palace',
+  everton: 'everton', 'everton fc': 'everton',
+  fulham: 'fulham', 'fulham fc': 'fulham',
+  hull: 'hull', 'hull city': 'hull',
+  ipswich: 'ipswich', 'ipswich town': 'ipswich',
+  leeds: 'leeds', 'leeds united': 'leeds', 'leeds utd': 'leeds',
+  liverpool: 'liverpool', 'liverpool fc': 'liverpool',
+  'man city': 'man-city', 'manchester city': 'man-city', 'man. city': 'man-city',
+  'man utd': 'man-utd', 'man united': 'man-utd', 'manchester united': 'man-utd', 'manchester utd': 'man-utd', 'man u': 'man-utd',
+  newcastle: 'newcastle', 'newcastle united': 'newcastle', 'newcastle utd': 'newcastle',
+  'nottm forest': 'nottm-forest', 'nottingham forest': 'nottm-forest', forest: 'nottm-forest', "nott'm forest": 'nottm-forest',
+  sunderland: 'sunderland', 'sunderland afc': 'sunderland',
+  tottenham: 'tottenham', 'tottenham hotspur': 'tottenham', spurs: 'tottenham',
+  'aek athens': 'aek-athens', aek: 'aek-athens',
+  'atletico madrid': 'atletico-madrid', atletico: 'atletico-madrid', 'atl madrid': 'atletico-madrid', 'atletico de madrid': 'atletico-madrid',
+  barcelona: 'barcelona', 'fc barcelona': 'barcelona', barca: 'barcelona',
+  'bayern munich': 'bayern', bayern: 'bayern', 'fc bayern': 'bayern', 'bayern munchen': 'bayern', 'fc bayern munich': 'bayern',
+  'bodo/glimt': 'bodo-glimt', 'bodo glimt': 'bodo-glimt', bodo: 'bodo-glimt',
+  'club brugge': 'club-brugge', brugge: 'club-brugge',
+  como: 'como', 'como 1907': 'como',
+  'borussia dortmund': 'dortmund', dortmund: 'dortmund', bvb: 'dortmund',
+  fenerbahce: 'fenerbahce', 'fenerbahce sk': 'fenerbahce',
+  feyenoord: 'feyenoord',
+  galatasaray: 'galatasaray', 'galatasaray sk': 'galatasaray',
+  'inter milan': 'inter', inter: 'inter', internazionale: 'inter', 'fc internazionale': 'inter',
+  'lask linz': 'lask', lask: 'lask',
+  lens: 'lens', 'rc lens': 'lens',
+  lille: 'lille', 'losc lille': 'lille', losc: 'lille',
+  napoli: 'napoli', 'ssc napoli': 'napoli',
+  'fc porto': 'porto', porto: 'porto',
+  psg: 'psg', 'paris saint-germain': 'psg', 'paris saint germain': 'psg', 'paris sg': 'psg', 'paris st germain': 'psg', 'paris st-germain': 'psg',
+  psv: 'psv', 'psv eindhoven': 'psv',
+  'rb leipzig': 'rb-leipzig', leipzig: 'rb-leipzig',
+  'real betis': 'real-betis', betis: 'real-betis',
+  'real madrid': 'real-madrid', madrid: 'real-madrid',
+  roma: 'roma', 'as roma': 'roma',
+  sabah: 'sabah', 'sabah fk': 'sabah',
+  'shakhtar donetsk': 'shakhtar', shakhtar: 'shakhtar',
+  'slavia prague': 'slavia-prague', 'slavia praha': 'slavia-prague', slavia: 'slavia-prague',
+  'slovan bratislava': 'slovan-bratislava', slovan: 'slovan-bratislava',
+  sporting: 'sporting', 'sporting cp': 'sporting', 'sporting lisbon': 'sporting', 'sporting clube de portugal': 'sporting',
+  'vfb stuttgart': 'stuttgart', stuttgart: 'stuttgart',
+  'viking fk': 'viking', viking: 'viking',
+  villarreal: 'villarreal', 'villarreal cf': 'villarreal',
+};
+/* dominant colour of each home kit; the away side switches to its alternate kit when both would clash */
+const KIT_COLOUR = { arsenal: 'red', 'aston-villa': 'claret', bournemouth: 'red', brentford: 'red', brighton: 'blue', chelsea: 'blue', coventry: 'blue', 'crystal-palace': 'white', everton: 'blue', fulham: 'white', hull: 'yellow', ipswich: 'blue', leeds: 'white', liverpool: 'red', 'man-city': 'blue', 'man-utd': 'red', newcastle: 'black', 'nottm-forest': 'red', sunderland: 'red', tottenham: 'white',
+  'aek-athens': 'yellow', 'atletico-madrid': 'red', barcelona: 'blue', bayern: 'black', 'bodo-glimt': 'yellow', 'club-brugge': 'blue', como: 'blue', dortmund: 'yellow', fenerbahce: 'yellow', feyenoord: 'red', galatasaray: 'red', inter: 'blue', lask: 'black', lens: 'yellow', lille: 'red', napoli: 'white', porto: 'blue', psg: 'blue', psv: 'red', 'rb-leipzig': 'white', 'real-betis': 'green', 'real-madrid': 'white', roma: 'claret', sabah: 'white', shakhtar: 'orange', 'slavia-prague': 'red', 'slovan-bratislava': 'blue', sporting: 'green', stuttgart: 'white', viking: 'blue', villarreal: 'yellow' };
+const KIT_ALT = { arsenal: 'arsenal-away', 'man-utd': 'man-utd-away', 'crystal-palace': 'crystal-palace-away', 'nottm-forest': 'nottm-forest-away', bournemouth: 'bournemouth-away', brighton: 'brighton-away', newcastle: 'newcastle-away' };
+const kitKey = name => String(name || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\./g, '').replace(/\s+/g, ' ').trim();
+function kitSlug(name) {
+  const k = kitKey(name);
+  return KIT_ALIASES[k] || KIT_ALIASES[k.replace(/^fc /, '')] || KIT_ALIASES[k.replace(/ fc$/, '')] || null;
+}
+function kitFor(sel, side) {
+  const home = kitSlug(sel.home), away = kitSlug(sel.away);
+  const mine = side === 'home' ? home : away;
+  if (!mine) return null;
+  if (side === 'away' && home && KIT_ALT[away] && KIT_COLOUR[home] === KIT_COLOUR[away]) return KIT_ALT[away];
+  return mine;
+}
+const kitHTML = slug => `<span class="team__flag team__flag--kit"><img src="assets/kit-${slug}@3x.png" alt=""></span>`;
 const TRUNKS = { home: 'red', away: 'blue' };
 function iconHTML(sel, side) {
   if (sel.sport === 'boxing') return `<span class="team__flag team__flag--trunks"><img src="assets/trunks-${TRUNKS[side]}@3x.png" alt=""></span>`;
-  return flagHTML(sel[side]);
+  const kit = kitFor(sel, side);
+  return kit ? kitHTML(kit) : flagHTML(sel[side]);
 }
 const SPORT_DEFAULT_MARKET = { football: 'Full Time Result', boxing: 'Fight Result' };
 
@@ -46,6 +119,7 @@ const tennisLive = (rows, game) => ({ rows, game });
 function examples() {
   const ftr = (pick, odds, home, away, ep) => ({ pick, market: 'Full Time Result', odds, home, away, date: 'Thu 24 Sep', time: '19:45', ep: !!ep });
   const live1 = tennisLive([['Errani/Paolini', [0, 1, 0], false], ['Guo/Jiang', [0, 0, 15], true]], 'Game 2');
+  const club = (pick, odds, home, away, date, time, ep) => ({ pick, market: 'Full Time Result', odds, home, away, date, time, ep: !!ep });
   const box = (pick, market, odds, home, away) => ({ sport: 'boxing', pick, market, odds, home, away, date: 'Sun 18 Oct', time: '04:00' });
   const fundora = () => box('Sebastian Fundora to win in Rd 2', 'Round Betting', '22/1', 'Sebastian Fundora', 'Ermal Hadribeaj');
   const settledTennis = tennisLive([['Errani/Paolini', [0], false], ['Guo/Jiang', [0], false]], '');
@@ -56,6 +130,7 @@ function examples() {
       { status: 'live', stake: 0.10, cashout: 0, sels: [{ pick: 'Errani/Paolini - Set 1 Game 2 Point 2 Winner', market: 'Point Betting', odds: '11/10', home: 'Errani/Paolini', away: 'Guo/Jiang', live: live1 }] },
       { status: 'live', stake: 0.10, cashout: 0, sels: [{ pick: 'Guo/Jiang (Svr) - Set 1 Game 3 Point 1 Winner', market: 'Point Betting', odds: '4/6', home: 'Errani/Paolini', away: 'Guo/Jiang', live: live1 }] },
       { status: 'open', stake: 0.10, cashout: 0.10, sels: [fundora()] },
+      { status: 'open', stake: 0.10, cashout: 0.10, sels: [club('Liverpool', '23/20', 'Liverpool', 'Brighton', 'Sun 25 Oct', '14:00', true), club('Draw', '14/5', 'Man Utd', 'Bournemouth', 'Sun 25 Oct', '14:00'), club('Tottenham', '8/13', 'Tottenham', 'Crystal Palace', 'Sat 31 Oct', '17:30'), club('Arsenal', '27/100', 'Slavia Prague', 'Arsenal', 'Wed 04 Nov', '20:00', true)] },
       { status: 'open', stake: 0.10, cashout: 0.10, sels: [ftr('Portugal', '1/7', 'Portugal', 'Wales', true), ftr('Draw', '11/4', 'Netherlands', 'Germany'), ftr('Draw', '21/10', 'Kosovo', 'Rep of Ireland'), ftr('Norway', '7/10', 'Norway', 'Denmark', true)] },
       { status: 'settled', result: 'cashed', cashedAmount: 0.10, stake: 0.10, cashout: 0, sels: [fundora()] },
       { status: 'settled', result: 'won', stake: 0.10, cashout: 0, sels: [{ pick: 'Guo/Jiang (Svr) - Set 1 Game 2 Point 2 Winner', market: 'Point Betting', odds: '4/6', home: 'Errani/Paolini', away: 'Guo/Jiang', live: settledTennis }] },
@@ -355,7 +430,7 @@ function submitWithdraw() {
 /* ---------- configurator ---------- */
 const newSel = () => ({ sport: 'football', pick: '', market: 'Full Time Result', odds: '', home: '', away: '', date: 'Thu 24 Sep', time: '19:45', ep: false, hs: 0, as: 0 });
 const SPORT_UI = {
-  football: { pick: 'e.g. Portugal or Draw', market: 'Full Time Result', home: 'Home team', away: 'Away team', homePh: 'Netherlands', awayPh: 'Germany', when: 'Kick-off', hs: 'Home score', as: 'Away score' },
+  football: { pick: 'e.g. Liverpool or Draw', market: 'Full Time Result', home: 'Home team', away: 'Away team', homePh: 'Liverpool', awayPh: 'Brighton', when: 'Kick-off', hs: 'Home score', as: 'Away score' },
   boxing: { pick: 'e.g. Sebastian Fundora to win in Rd 2', market: 'Round Betting', home: 'Fighter 1 (red corner)', away: 'Fighter 2 (blue corner)', homePh: 'Sebastian Fundora', awayPh: 'Ermal Hadribeaj', when: 'Fight time', hs: 'Fighter 1 score', as: 'Fighter 2 score' },
 };
 const previewHTML = s => (s.home ? iconHTML(s, 'home') + esc(s.home) : '') + (s.away ? '<span style="width:8px"></span>' + iconHTML(s, 'away') + esc(s.away) : '');
@@ -473,7 +548,7 @@ function syncDraftFromForm() {
   const b = $('#cfg-balance'); if (b) state.balance = r2(+b.value || 0);
   const s = $('#cfg-stake'); if (s) draft.stake = s.value;
   const c = $('#cfg-cashout'); if (c) draft.cashout = c.value;
-  $$('#cfg-sels [data-sel]').forEach(inp => { const sel = draft.sels[+inp.dataset.sel]; if (!sel) return; const k = inp.dataset.k; sel[k] = k === 'ep' ? inp.value === '1' : inp.value; });
+  $$('#cfg-sels input[data-sel], #cfg-sels select[data-sel]').forEach(inp => { const sel = draft.sels[+inp.dataset.sel]; if (!sel) return; const k = inp.dataset.k; sel[k] = k === 'ep' ? inp.value === '1' : inp.value; });
 }
 document.addEventListener('input', e => {
   const el = e.target;

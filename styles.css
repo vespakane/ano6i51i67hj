@@ -136,6 +136,8 @@ img { display: block; }
 .team__flag img { width: 16px; height: 16px; object-fit: cover; }
 .team__flag--trunks { width: 16px; height: 18px; border-radius: 0; background: none; box-shadow: none; margin-left: -22px; margin-right: 5.3px; }
 .team__flag--trunks img { width: 16px; height: 18px; object-fit: contain; }
+.team__flag--kit { border-radius: 0; background: none; box-shadow: none; }
+.team__flag--kit img { width: 15px; height: 16px; object-fit: contain; }
 .teams--settled { margin-bottom: 15.4px; margin-left: -1px; }
 .team__score { margin-left: auto; position: relative; top: -1.3px; width: 20.7px; height: 19.7px; border-radius: 2px; background: #4f4f4f; color: #fff; font-size: 11px; font-weight: 700; line-height: 19.7px; text-align: center; }
 .team__name { font-size: 11px; font-weight: 600; color: #fff; }
