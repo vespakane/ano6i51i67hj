@@ -126,7 +126,7 @@ img { display: block; }
 .sel__odds { font-weight: 400; color: #fff; }
 .sel__title--inline .sel__odds { margin-left: 11.6px; }
 .sel__title--right { justify-content: flex-start; }
-.sel__title--right .sel__odds { margin-left: 11.6px; margin-right: 4.7px; flex: none; }
+.sel__title--right .sel__odds { margin-left: 9.6px; margin-right: 4.7px; flex: none; }
 .void { margin-left: 16px; height: 18.7px; margin-top: 0.7px; padding: 0 6.5px; border-radius: 3px; background: #5b615f; color: #fff; font-size: 12.5px; font-weight: 700; line-height: 18.7px; }
 .ep { margin-left: auto; margin-top: 0.4px; height: 20.7px; padding: 0 7px; border: 1px solid #858786; border-radius: 3px; color: #fff; font-size: 10px; font-weight: 800; font-style: italic; letter-spacing: .02em; line-height: 18.7px; white-space: nowrap; padding: 0 4px; }
 .sel__market { margin-top: 1.4px; font-size: 11px; line-height: 18px; color: var(--grey-1); }
@@ -142,6 +142,10 @@ img { display: block; }
 .team__score { margin-left: auto; position: relative; top: -1.3px; width: 20.7px; height: 19.7px; border-radius: 2px; background: #4f4f4f; color: #fff; font-size: 11px; font-weight: 700; line-height: 19.7px; text-align: center; }
 .team__name { font-size: 11px; font-weight: 600; color: #fff; }
 .team__when { margin-left: auto; font-size: 11.5px; color: var(--grey-1); }
+/* special (outright) event block */
+.event { margin-top: 10px; margin-left: -5.7px; }
+.event__name { font-size: 11.3px; line-height: 18px; font-weight: 600; color: var(--grey-2); }
+.event__when { margin-top: 0.3px; font-size: 11px; line-height: 18px; color: var(--grey-1); }
 /* live score block */
 .score { margin-top: 14.9px; margin-left: -21.3px; }
 .score__row { display: flex; align-items: center; height: 25px; }

@@ -112,7 +112,9 @@ function iconHTML(sel, side) {
   const kit = kitFor(sel, side);
   return kit ? kitHTML(kit) : flagHTML(sel[side]);
 }
-const SPORT_DEFAULT_MARKET = { football: 'Full Time Result', boxing: 'Fight Result' };
+const SPORT_DEFAULT_MARKET = { football: 'Full Time Result', boxing: 'Fight Result', special: 'To Win Outright' };
+const SPORTS = ['football', 'boxing', 'special'];
+const sportOf = s => SPORTS.includes(s) ? s : 'football';
 
 /* ---------- example data (from the screenshots) ---------- */
 const tennisLive = (rows, game) => ({ rows, game });
@@ -122,6 +124,7 @@ function examples() {
   const club = (pick, odds, home, away, date, time, ep) => ({ pick, market: 'Full Time Result', odds, home, away, date, time, ep: !!ep });
   const box = (pick, market, odds, home, away) => ({ sport: 'boxing', pick, market, odds, home, away, date: 'Sun 18 Oct', time: '04:00' });
   const fundora = () => box('Sebastian Fundora to win in Rd 2', 'Round Betting', '22/1', 'Sebastian Fundora', 'Ermal Hadribeaj');
+  const special = (pick, odds, event, date, time) => ({ sport: 'special', pick, market: 'To Win Outright', odds, event, date, time });
   const settledTennis = tennisLive([['Errani/Paolini', [0], false], ['Guo/Jiang', [0], false]], '');
   return {
     balance: 9.63,
@@ -130,6 +133,7 @@ function examples() {
       { status: 'live', stake: 0.10, cashout: 0, sels: [{ pick: 'Errani/Paolini - Set 1 Game 2 Point 2 Winner', market: 'Point Betting', odds: '11/10', home: 'Errani/Paolini', away: 'Guo/Jiang', live: live1 }] },
       { status: 'live', stake: 0.10, cashout: 0, sels: [{ pick: 'Guo/Jiang (Svr) - Set 1 Game 3 Point 1 Winner', market: 'Point Betting', odds: '4/6', home: 'Errani/Paolini', away: 'Guo/Jiang', live: live1 }] },
       { status: 'open', stake: 0.10, cashout: 0.10, sels: [fundora()] },
+      { status: 'open', stake: 0.10, cashout: 0.10, sels: [special('John Nellis', '14/1', 'Strictly Come Dancing 2026', 'Thu 17 Dec', '18:30')] },
       { status: 'open', stake: 0.10, cashout: 0.10, sels: [club('Liverpool', '23/20', 'Liverpool', 'Brighton', 'Sun 25 Oct', '14:00', true), club('Draw', '14/5', 'Man Utd', 'Bournemouth', 'Sun 25 Oct', '14:00'), club('Tottenham', '8/13', 'Tottenham', 'Crystal Palace', 'Sat 31 Oct', '17:30'), club('Arsenal', '27/100', 'Slavia Prague', 'Arsenal', 'Wed 04 Nov', '20:00', true)] },
       { status: 'open', stake: 0.10, cashout: 0.10, sels: [ftr('Portugal', '1/7', 'Portugal', 'Wales', true), ftr('Draw', '11/4', 'Netherlands', 'Germany'), ftr('Draw', '21/10', 'Kosovo', 'Rep of Ireland'), ftr('Norway', '7/10', 'Norway', 'Denmark', true)] },
       { status: 'settled', result: 'cashed', cashedAmount: 0.10, stake: 0.10, cashout: 0, sels: [fundora()] },
@@ -203,7 +207,10 @@ function selHTML(bet, sel) {
     title = `<div class="sel__title sel__title--right"><span class="sel__pick">${esc(sel.pick)}</span><span class="sel__odds">${esc(sel.odds)}</span></div>`;
   }
   let body = '';
-  if (sel.live && settled) {
+  if (sel.sport === 'special') {
+    const when = settled ? '' : [sel.date || '', sel.time || ''].filter(Boolean).join(' ');
+    body = `<div class="event"><div class="event__name">${esc(sel.event || '')}</div>${when ? `<div class="event__when">${esc(when)}</div>` : ''}</div>`;
+  } else if (sel.live && settled) {
     body = `<div class="teams teams--settled">${sel.live.rows.map(r => `<div class="team"><span class="team__name">${esc(r[0])}</span><span class="team__score">${esc(r[1][0])}</span></div>`).join('')}</div>`;
   } else if (sel.live && bet.status !== 'open') {
     body = `<div class="score">${sel.live.rows.map(r => `<div class="score__row"><span class="score__sq${r[2] ? ' score__sq--serving' : ''}"></span><span class="score__name">${esc(r[0])}</span><span class="score__cols">${r[1].map(v => `<span>${esc(v)}</span>`).join('')}</span></div>`).join('')}
@@ -220,7 +227,7 @@ function selHTML(bet, sel) {
 function collapsedHTML(bet) {
   let right = '';
   if (hasCashout(bet)) right = `<span class="bet__co"><b>Cash Out</b><span>${money(+bet.cashout)}</span></span>`;
-  else if (bet.status === 'live') {
+  else if (bet.status === 'live' && bet.sels[0].sport !== 'special') {
     const s = bet.sels[0]; let h = 0, a = 0;
     if (s.live) { h = s.live.rows[0][1][0]; a = s.live.rows[1][1][0]; } else { h = s.hs ?? 0; a = s.as ?? 0; }
     right = `<span class="scorebox"><span>${esc(h)}</span><span>${esc(a)}</span></span>`;
@@ -428,27 +435,29 @@ function submitWithdraw() {
 }
 
 /* ---------- configurator ---------- */
-const newSel = () => ({ sport: 'football', pick: '', market: 'Full Time Result', odds: '', home: '', away: '', date: 'Thu 24 Sep', time: '19:45', ep: false, hs: 0, as: 0 });
+const newSel = () => ({ sport: 'football', pick: '', market: 'Full Time Result', odds: '', home: '', away: '', event: '', date: 'Thu 24 Sep', time: '19:45', ep: false, hs: 0, as: 0 });
 const SPORT_UI = {
   football: { pick: 'e.g. Liverpool or Draw', market: 'Full Time Result', home: 'Home team', away: 'Away team', homePh: 'Liverpool', awayPh: 'Brighton', when: 'Kick-off', hs: 'Home score', as: 'Away score' },
   boxing: { pick: 'e.g. Sebastian Fundora to win in Rd 2', market: 'Round Betting', home: 'Fighter 1 (red corner)', away: 'Fighter 2 (blue corner)', homePh: 'Sebastian Fundora', awayPh: 'Ermal Hadribeaj', when: 'Fight time', hs: 'Fighter 1 score', as: 'Fighter 2 score' },
+  special: { pick: 'e.g. John Nellis', market: 'To Win Outright', event: 'Event / competition', eventPh: 'Strictly Come Dancing 2026', when: 'Time' },
 };
-const previewHTML = s => (s.home ? iconHTML(s, 'home') + esc(s.home) : '') + (s.away ? '<span style="width:8px"></span>' + iconHTML(s, 'away') + esc(s.away) : '');
+const previewHTML = s => s.sport === 'special' ? '' : (s.home ? iconHTML(s, 'home') + esc(s.home) : '') + (s.away ? '<span style="width:8px"></span>' + iconHTML(s, 'away') + esc(s.away) : '');
 let draft = null;
 const resetDraft = () => { draft = { status: 'open', result: 'won', stake: '0.10', cashout: '', sels: [newSel()] }; };
 function draftCalc() { return calc({ stake: +draft.stake || 0, sels: draft.sels }); }
 function segHTML(name, opts, cur) { return `<div class="seg" data-seg="${name}">${opts.map(([v, l]) => `<button type="button" data-v="${v}" class="${cur === v ? 'is-on' : ''}">${l}</button>`).join('')}</div>`; }
 function selFormHTML(s, i) {
   const u = SPORT_UI[s.sport] || SPORT_UI.football;
-  const liveFields = draft.status === 'live' ? `<div class="cfg-row"><div class="cfg-f"><label>${u.hs}</label><input data-sel="${i}" data-k="hs" type="number" min="0" value="${esc(s.hs)}"></div><div class="cfg-f"><label>${u.as}</label><input data-sel="${i}" data-k="as" type="number" min="0" value="${esc(s.as)}"></div></div>` : '';
+  const special = s.sport === 'special';
+  const liveFields = draft.status === 'live' && !special ? `<div class="cfg-row"><div class="cfg-f"><label>${u.hs}</label><input data-sel="${i}" data-k="hs" type="number" min="0" value="${esc(s.hs)}"></div><div class="cfg-f"><label>${u.as}</label><input data-sel="${i}" data-k="as" type="number" min="0" value="${esc(s.as)}"></div></div>` : '';
   const whenFields = draft.status === 'open' ? `<div class="cfg-row"><div class="cfg-f"><label>Date</label><input data-sel="${i}" data-k="date" value="${esc(s.date)}"></div><div class="cfg-f"><label>${u.when}</label><input data-sel="${i}" data-k="time" value="${esc(s.time)}"></div><div class="cfg-f"><label>Early payout</label><select data-sel="${i}" data-k="ep"><option value="0"${!s.ep ? ' selected' : ''}>No</option><option value="1"${s.ep ? ' selected' : ''}>Yes</option></select></div></div>` : '';
   return `<div class="cfg-sel">
     <div class="cfg-sel__head"><span>Selection ${i + 1}</span>${draft.sels.length > 1 ? `<button type="button" data-action="cfg-del-sel" data-i="${i}">Remove</button>` : ''}</div>
-    <div class="cfg-f" style="margin-top:8px"><label>Sport</label><div class="seg" data-sel="${i}" data-k="sport"><button type="button" data-v="football" class="${s.sport !== 'boxing' ? 'is-on' : ''}">Football</button><button type="button" data-v="boxing" class="${s.sport === 'boxing' ? 'is-on' : ''}">Boxing</button></div></div>
-    <div class="cfg-row"><div class="cfg-f" style="flex:2"><label>First line (${s.sport === 'boxing' ? 'fighter / pick' : 'team / pick'})</label><input data-sel="${i}" data-k="pick" placeholder="${u.pick}" value="${esc(s.pick)}"></div><div class="cfg-f"><label>Odds</label><input data-sel="${i}" data-k="odds" placeholder="11/8" value="${esc(s.odds)}"></div></div>
+    <div class="cfg-f" style="margin-top:8px"><label>Sport</label><div class="seg" data-sel="${i}" data-k="sport"><button type="button" data-v="football" class="${sportOf(s.sport) === 'football' ? 'is-on' : ''}">Football</button><button type="button" data-v="boxing" class="${s.sport === 'boxing' ? 'is-on' : ''}">Boxing</button><button type="button" data-v="special" class="${special ? 'is-on' : ''}">Special</button></div></div>
+    <div class="cfg-row"><div class="cfg-f" style="flex:2"><label>First line (${s.sport === 'boxing' ? 'fighter / pick' : special ? 'pick' : 'team / pick'})</label><input data-sel="${i}" data-k="pick" placeholder="${u.pick}" value="${esc(s.pick)}"></div><div class="cfg-f"><label>Odds</label><input data-sel="${i}" data-k="odds" placeholder="11/8" value="${esc(s.odds)}"></div></div>
     <div class="cfg-row"><div class="cfg-f"><label>Second line (bet type)</label><input data-sel="${i}" data-k="market" placeholder="${u.market}" value="${esc(s.market)}"></div></div>
-    <div class="cfg-row"><div class="cfg-f"><label>${u.home}</label><input data-sel="${i}" data-k="home" placeholder="${u.homePh}" value="${esc(s.home)}"></div><div class="cfg-f"><label>${u.away}</label><input data-sel="${i}" data-k="away" placeholder="${u.awayPh}" value="${esc(s.away)}"></div></div>
-    <div class="cfg-flags" data-flags="${i}">${previewHTML(s)}</div>
+    ${special ? `<div class="cfg-row"><div class="cfg-f"><label>${u.event}</label><input data-sel="${i}" data-k="event" placeholder="${u.eventPh}" value="${esc(s.event || '')}"></div></div>` : `<div class="cfg-row"><div class="cfg-f"><label>${u.home}</label><input data-sel="${i}" data-k="home" placeholder="${u.homePh}" value="${esc(s.home)}"></div><div class="cfg-f"><label>${u.away}</label><input data-sel="${i}" data-k="away" placeholder="${u.awayPh}" value="${esc(s.away)}"></div></div>
+    <div class="cfg-flags" data-flags="${i}">${previewHTML(s)}</div>`}
     ${whenFields}${liveFields}</div>`;
 }
 function renderConfig() {
@@ -483,7 +492,7 @@ function addDraftBet() {
   const stakeEl = $('#cfg-stake'); if (!(+stakeEl.value > 0)) { stakeEl.classList.add('is-bad'); bad = true; }
   if (bad) return;
   const bet = withId({ status: draft.status, result: draft.status === 'settled' ? draft.result : undefined, stake: r2(+draft.stake), cashout: draft.status !== 'settled' && +draft.cashout > 0 ? r2(+draft.cashout) : 0,
-    sels: draft.sels.map(s => ({ sport: s.sport === 'boxing' ? 'boxing' : 'football', pick: s.pick.trim(), market: s.market.trim() || SPORT_DEFAULT_MARKET[s.sport] || 'Full Time Result', odds: s.odds.trim(), home: s.home.trim(), away: s.away.trim(), date: s.date, time: s.time, ep: !!s.ep, hs: +s.hs || 0, as: +s.as || 0 })) });
+    sels: draft.sels.map(s => ({ sport: sportOf(s.sport), pick: s.pick.trim(), market: s.market.trim() || SPORT_DEFAULT_MARKET[sportOf(s.sport)], odds: s.odds.trim(), home: s.sport === 'special' ? '' : s.home.trim(), away: s.sport === 'special' ? '' : s.away.trim(), event: s.sport === 'special' ? (s.event || '').trim() : '', date: s.date, time: s.time, ep: !!s.ep, hs: +s.hs || 0, as: +s.as || 0 })) });
   if (bet.status === 'live') bet.sels.forEach(s => { if (s.home || s.away) s.live = { rows: [[s.home, [s.hs], false], [s.away, [s.as], false]], game: 'In-Play' }; });
   state.bets.push(bet); resetDraft(); save(); renderConfig();
   $('#config-scroll').scrollTo({ top: $('#config-scroll').scrollHeight, behavior: 'smooth' });
