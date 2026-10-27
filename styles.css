@@ -96,7 +96,8 @@ img { display: block; }
 .bet--won .bet__row .bet__desc { margin-left: 8px; }
 .scorebox--settled { gap: 3px; margin-left: 14.3px; margin-right: 0; }
 .scorebox--settled span { width: 19px; height: 16px; line-height: 16px; }
-.bet__pill { flex: none; position: relative; top: 0.3px; margin-left: 25px; width: 85px; height: 32px; border-radius: 16px; background: var(--mint); color: #111; font-size: 12px; font-weight: 700; line-height: 14.8px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+.bet__pill { flex: none; position: relative; top: 0.3px; margin-left: 25px; width: 88px; height: 36px; border-radius: 18px; background: var(--mint); color: #111; font-size: 12px; font-weight: 700; line-height: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; gap: 1.5px; }
+.bet__pill b { font-size: 13.5px; font-weight: 700; letter-spacing: 0.2px; }
 .bet__pill--lost { background: #4f4f4f; color: #fff; font-weight: 600; }
 .bet__co { width: 73px; height: 43px; border-radius: 4px; background: #4f4f4f; margin-left: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; line-height: 12px; }
 .bet__co b { color: #fff; font-weight: 700; }
