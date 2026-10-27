@@ -504,7 +504,7 @@ function addDraftBet() {
   const bet = withId({ status: draft.status, result: draft.status === 'settled' ? draft.result : undefined, stake: r2(+draft.stake), cashout: draft.status !== 'settled' && +draft.cashout > 0 ? r2(+draft.cashout) : 0,
     sels: draft.sels.map(s => ({ sport: sportOf(s.sport), pick: s.pick.trim(), market: s.market.trim() || SPORT_DEFAULT_MARKET[sportOf(s.sport)], odds: s.odds.trim(), home: s.sport === 'special' ? '' : s.home.trim(), away: s.sport === 'special' ? '' : s.away.trim(), event: s.sport === 'special' ? (s.event || '').trim() : '', date: s.date, time: s.time, ep: !!s.ep, hs: +s.hs || 0, as: +s.as || 0 })) });
   if (bet.status === 'live') bet.sels.forEach(s => { if (s.home || s.away) s.live = { rows: [[s.home, [s.hs], false], [s.away, [s.as], false]], game: 'In-Play' }; });
-  state.bets.push(bet); resetDraft(); save(); renderConfig();
+  state.bets.unshift(bet); /* newest bet first, as in the real app */ resetDraft(); save(); renderConfig();
   $('#config-scroll').scrollTo({ top: $('#config-scroll').scrollHeight, behavior: 'smooth' });
 }
 
@@ -547,7 +547,7 @@ document.addEventListener('click', e => {
       const have = new Set(state.bets.map(sig));
       const add = ex.bets.filter(b => !have.has(sig(b)));
       if (!state.bets.length) state.balance = ex.balance;
-      state.bets = [...state.bets.filter(b => b.status !== 'settled'), ...add.filter(b => b.status !== 'settled'), ...add.filter(b => b.status === 'settled'), ...state.bets.filter(b => b.status === 'settled')];
+      state.bets = [...add.filter(b => b.status !== 'settled'), ...state.bets.filter(b => b.status !== 'settled'), ...add.filter(b => b.status === 'settled'), ...state.bets.filter(b => b.status === 'settled')];
       save(); renderConfig(); break;
     }
     case 'cfg-clear': state.bets = state.bets.filter(b => b.status === 'settled'); save(); renderConfig(); break;
