@@ -602,6 +602,25 @@ load();
 setTimeout(() => { loadH2C().catch(() => {}); }, 1500);
 renderBalance(); renderBadge();
 showScreen('home');
+
+/* ---------- self-update: a Home Screen web app keeps the old page alive between launches, so poll the
+   server's index.html and reload (with a fresh query string, which bypasses the page cache) when its
+   app.js?v= stamp differs from the one this page loaded ---------- */
+const BUILD = ((document.querySelector('script[src*="app.js"]') || {}).src || '').replace(/^.*[?&]v=([^&]*).*$/, '$1');
+let updateCheckAt = 0;
+async function checkForUpdate() {
+  if (!BUILD || !/^https?:$/.test(location.protocol) || Date.now() - updateCheckAt < 15000) return;
+  updateCheckAt = Date.now();
+  try {
+    const html = await (await fetch(`${location.pathname}?u=${Date.now()}`, { cache: 'no-store' })).text();
+    const live = (html.match(/app\.js\?v=([^"&]+)/) || [])[1];
+    if (live && live !== BUILD) location.replace(`${location.pathname}?r=${Date.now()}`);
+  } catch (e) { /* offline: keep running the current build */ }
+}
+checkForUpdate();
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkForUpdate(); });
+window.addEventListener('pageshow', e => { if (e.persisted) checkForUpdate(); });
+
 const q = new URLSearchParams(location.search);
 if (q.has('demo')) {
   // ?demo=home|mybets|balance|withdraw|balances|config  &tab=open|live|settled  &expand=1  &examples=1
