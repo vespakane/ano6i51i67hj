@@ -379,7 +379,9 @@ img { display: block; }
 .cfg-item__main b { color: var(--mint); }
 .cfg-item__main small { display: block; color: var(--text-link); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; margin-top: 2px; }
 .cfg-item button { color: #ff7b7b; font-size: 12px; font-weight: 600; }
-.cfg-kept { color: var(--grey-3); font-size: 12px; }
+.cfg-move { display: flex; gap: 2px; }
+.cfg-move button { width: 26px; height: 26px; border-radius: 4px; background: #2a302d; color: #ddd; font-size: 10px; display: flex; align-items: center; justify-content: center; }
+.cfg-move button:disabled { opacity: 0.3; cursor: default; }
 .cfg-status { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; background: #2b3a34; color: var(--mint); text-transform: uppercase; }
 .cfg-status--settled { background: #3a2b2b; color: #ffb3b3; }
 .cfg-status--won { background: #243a30; color: var(--mint); }

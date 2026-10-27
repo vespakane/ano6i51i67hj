@@ -473,10 +473,11 @@ function selFormHTML(s, i) {
 function renderConfig() {
   const c = draftCalc();
   const statusOf = b => b.status === 'settled' ? (b.result || 'won') : b.status;
-  const list = state.bets.map(b => `<div class="cfg-item"><div class="cfg-item__main"><b>${money(+b.stake)} ${typeLabel(b.sels.length)}</b> · returns ${money(calc(b).total)}<small>${esc(descOf(b))}</small></div><span class="cfg-status cfg-status--${statusOf(b)}">${b.status === 'settled' ? b.result : b.status === 'live' ? 'live' : 'not started'}</span>${b.status === 'settled' ? '<span class="cfg-kept">Kept</span>' : `<button type="button" data-action="cfg-del" data-id="${b.id}">Remove</button>`}</div>`).join('');
+  /* top of this list = top of the My Bets tab; ▲▼ reorder, Remove deletes any bet (settled ones too) */
+  const list = state.bets.map((b, i) => `<div class="cfg-item"><div class="cfg-item__main"><b>${money(+b.stake)} ${typeLabel(b.sels.length)}</b> · returns ${money(calc(b).total)}<small>${esc(descOf(b))}</small></div><span class="cfg-status cfg-status--${statusOf(b)}">${b.status === 'settled' ? b.result : b.status === 'live' ? 'live' : 'not started'}</span><span class="cfg-move"><button type="button" data-action="cfg-move" data-id="${b.id}" data-dir="-1" aria-label="Move up"${i === 0 ? ' disabled' : ''}>&#9650;</button><button type="button" data-action="cfg-move" data-id="${b.id}" data-dir="1" aria-label="Move down"${i === state.bets.length - 1 ? ' disabled' : ''}>&#9660;</button></span><button type="button" data-action="cfg-del" data-id="${b.id}">Remove</button></div>`).join('');
   $('#config-scroll').innerHTML = `
     <div class="cfg-h1">Configure bets</div>
-    <div class="cfg-sub">Set up the account balance and the bet slips you want to see in My Bets. Everything is saved on this device. Settled bets stay in the Settled tab for good (only "Reset everything" clears them).</div>
+    <div class="cfg-sub">Set up the account balance and the bet slips you want to see in My Bets. Everything is saved on this device. The list below is in the same order as My Bets: use the arrows to reorder and Remove to delete a bet.</div>
     <div class="cfg-card"><h3>Account</h3><div class="cfg-row"><div class="cfg-f"><label>Balance (£)</label><input id="cfg-balance" type="number" step="0.01" min="0" value="${state.balance.toFixed(2)}"></div></div></div>
     <div class="cfg-card"><h3>Add a bet</h3>
       <div class="cfg-f"><label>Status</label>${segHTML('status', [['open', 'Not started'], ['live', 'Live'], ['settled', 'Settled']], draft.status)}</div>
@@ -558,6 +559,12 @@ document.addEventListener('click', e => {
       renderBalance(); renderBadge(); renderConfig(); $('#config-scroll').scrollTo({ top: 0 }); break;
     }
     case 'cfg-del': state.bets = state.bets.filter(b => b.id !== t.dataset.id); save(); renderConfig(); break;
+    case 'cfg-move': {
+      const i = state.bets.findIndex(b => b.id === t.dataset.id), j = i + (+t.dataset.dir);
+      if (i < 0 || j < 0 || j >= state.bets.length) break;
+      [state.bets[i], state.bets[j]] = [state.bets[j], state.bets[i]];
+      save(); renderConfig(); break;
+    }
     case 'cfg-add-sel': syncDraftFromForm(); draft.sels.push(newSel()); renderConfig(); break;
     case 'cfg-del-sel': syncDraftFromForm(); draft.sels.splice(+t.dataset.i, 1); renderConfig(); break;
     case 'cfg-add-bet': syncDraftFromForm(); addDraftBet(); break;
@@ -610,7 +617,7 @@ if (q.has('demo')) {
   else if (d === 'withdraw') openBank('withdraw');
   else if (d === 'balances') { state.recent = [{ amount: state.balance, fresh: true }]; state.balance = 0; renderBalance(); openBank('balances'); }
   else if (d === 'config') openConfig();
-  if (q.get('scroll')) { const sc = $(`[data-scroll="${d === 'mybets' ? 'mybets' : 'home'}"]`); sc.scrollTop = +q.get('scroll'); }
+  if (q.get('scroll')) { const sc = d === 'config' ? $('#config-scroll') : $(`[data-scroll="${d === 'mybets' ? 'mybets' : 'home'}"]`); sc.scrollTop = +q.get('scroll'); }
   if (q.has('share')) { const b = state.bets[+q.get('share')]; if (b) { state.ui[b.id] = { expanded: true }; renderBets(); setTimeout(() => shareBet(b.id), 400); } }
 } else {
   openConfig();
