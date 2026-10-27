@@ -47,6 +47,7 @@ const KIT_ALIASES = {
   'crystal palace': 'crystal-palace', palace: 'crystal-palace',
   everton: 'everton', 'everton fc': 'everton',
   fulham: 'fulham', 'fulham fc': 'fulham',
+  fleetwood: 'fleetwood', 'fleetwood town': 'fleetwood',
   hull: 'hull', 'hull city': 'hull',
   ipswich: 'ipswich', 'ipswich town': 'ipswich',
   leeds: 'leeds', 'leeds united': 'leeds', 'leeds utd': 'leeds',
@@ -90,7 +91,7 @@ const KIT_ALIASES = {
   villarreal: 'villarreal', 'villarreal cf': 'villarreal',
 };
 /* dominant colour of each home kit; the away side switches to its alternate kit when both would clash */
-const KIT_COLOUR = { arsenal: 'red', 'aston-villa': 'claret', bournemouth: 'red', brentford: 'red', brighton: 'blue', chelsea: 'blue', coventry: 'blue', 'crystal-palace': 'white', everton: 'blue', fulham: 'white', hull: 'yellow', ipswich: 'blue', leeds: 'white', liverpool: 'red', 'man-city': 'blue', 'man-utd': 'red', newcastle: 'black', 'nottm-forest': 'red', sunderland: 'red', tottenham: 'white',
+const KIT_COLOUR = { arsenal: 'red', 'aston-villa': 'claret', bournemouth: 'red', brentford: 'red', brighton: 'blue', chelsea: 'blue', coventry: 'blue', 'crystal-palace': 'white', everton: 'blue', fulham: 'white', fleetwood: 'red', hull: 'yellow', ipswich: 'blue', leeds: 'white', liverpool: 'red', 'man-city': 'blue', 'man-utd': 'red', newcastle: 'black', 'nottm-forest': 'red', sunderland: 'red', tottenham: 'white',
   'aek-athens': 'yellow', 'atletico-madrid': 'red', barcelona: 'blue', bayern: 'black', 'bodo-glimt': 'yellow', 'club-brugge': 'blue', como: 'blue', dortmund: 'yellow', fenerbahce: 'yellow', feyenoord: 'red', galatasaray: 'red', inter: 'blue', lask: 'black', lens: 'yellow', lille: 'red', napoli: 'white', porto: 'blue', psg: 'blue', psv: 'red', 'rb-leipzig': 'white', 'real-betis': 'green', 'real-madrid': 'white', roma: 'claret', sabah: 'white', shakhtar: 'orange', 'slavia-prague': 'red', 'slovan-bratislava': 'blue', sporting: 'green', stuttgart: 'white', viking: 'blue', villarreal: 'yellow' };
 const KIT_ALT = { arsenal: 'arsenal-away', 'man-utd': 'man-utd-away', 'crystal-palace': 'crystal-palace-away', 'nottm-forest': 'nottm-forest-away', bournemouth: 'bournemouth-away', brighton: 'brighton-away', newcastle: 'newcastle-away' };
 const kitKey = name => String(name || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\./g, '').replace(/\s+/g, ' ').trim();
