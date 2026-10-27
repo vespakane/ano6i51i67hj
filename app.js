@@ -232,6 +232,15 @@ function collapsedHTML(bet) {
     const s = bet.sels[0]; let h = 0, a = 0;
     if (s.live) { h = s.live.rows[0][1][0]; a = s.live.rows[1][1][0]; } else { h = s.hs ?? 0; a = s.as ?? 0; }
     right = `<span class="scorebox"><span>${esc(h)}</span><span>${esc(a)}</span></span>`;
+  } else if (bet.status === 'settled' && (bet.result === 'won' || bet.result === 'lost')) {
+    /* settled: score boxes (team sports only) then the Won / Lost pill, as in the collapsed WON screenshot */
+    const s = bet.sels[0];
+    if (s.sport !== 'special' && s.sport !== 'boxing') {
+      let h = 0, a = 0;
+      if (s.live) { h = s.live.rows[0][1][0]; a = s.live.rows[1][1][0]; } else { h = s.hs ?? 0; a = s.as ?? 0; }
+      right = `<span class="scorebox scorebox--settled"><span>${esc(h)}</span><span>${esc(a)}</span></span>`;
+    }
+    right += bet.result === 'won' ? `<span class="bet__pill">Won<br>${money(calc(bet).total)}</span>` : '<span class="bet__pill bet__pill--lost">Lost</span>';
   }
   return `<button class="bet__row" type="button" data-action="expand" data-id="${bet.id}"><span class="bet__stake">${money(+bet.stake)}</span><span class="bet__type">${typeLabel(bet.sels.length)}</span><span class="bet__desc">${esc(descOf(bet))}</span>${right}</button>`;
 }
